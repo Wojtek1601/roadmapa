@@ -1,0 +1,34 @@
+import { apiRequest } from './client';
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+}
+
+interface AuthResponse {
+  token: string;
+  user: User;
+}
+
+interface MeResponse {
+  user: User;
+}
+
+export function login(email: string, password: string) {
+  return apiRequest<AuthResponse>('/auth/login', {
+    method: 'POST',
+    body: { email, password },
+  });
+}
+
+export function register(email: string, password: string, name: string) {
+  return apiRequest<AuthResponse>('/auth/register', {
+    method: 'POST',
+    body: { email, password, name },
+  });
+}
+
+export function getMe(token: string) {
+  return apiRequest<MeResponse>('/auth/me', { token });
+}
