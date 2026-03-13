@@ -129,16 +129,26 @@ createdb roadmapa
 
 ### 3. Zainstaluj zależności
 
+#### Backend
+
 ```bash
 cd server
 npm install
 ```
 
-### 4. Skonfiguruj zmienne środowiskowe
-
-Skopiuj plik `.env.example` i dostosuj do swoich ustawień:
+#### Frontend
 
 ```bash
+cd ../client
+npm install
+```
+
+### 4. Skonfiguruj zmienne środowiskowe
+
+Wróć do katalogu serwera, skopiuj plik `.env.example` i dostosuj do swoich ustawień:
+
+```bash
+cd ../server
 cp .env.example .env
 ```
 
@@ -157,16 +167,19 @@ DATABASE_URL="postgresql://TWOJ_USER:TWOJE_HASLO@localhost:5432/roadmapa?schema=
 
 ### 5. Skonfiguruj bazę danych
 
-Wygeneruj klienta Prisma i uruchom migracje:
+Wygeneruj klienta Prisma i uruchom migracje (upewnij się, że jesteś w katalogu `server/`):
 
 ```bash
+# z katalogu server/
 npm run prisma:generate
 npm run prisma:migrate
 ```
 
 > **Uwaga:** Jeśli ten krok kończy się błędem `P1001: Can't reach database server at localhost:5432`, upewnij się, że baza PostgreSQL jest uruchomiona (patrz krok 2).
 
-### 6. Uruchom serwer deweloperski
+### 6. Uruchom serwer deweloperski (backend)
+
+Z katalogu `server/`:
 
 ```bash
 npm run dev
@@ -181,17 +194,43 @@ curl http://localhost:3000/api/health
 # Oczekiwana odpowiedź: {"status":"ok"}
 ```
 
-### 7. Uruchom testy
+### 7. Uruchom frontend (w nowym terminalu)
+
+Otwórz **nowy terminal** i uruchom aplikację frontendową:
 
 ```bash
+cd client
+npm run dev
+```
+
+Frontend wystartuje pod adresem `http://localhost:5173`.
+Vite automatycznie przekierowuje żądania `/api` do backendu na porcie `3000`, więc oba serwery współpracują ze sobą bez dodatkowej konfiguracji.
+
+> Otwórz w przeglądarce: **http://localhost:5173**
+
+### 8. Uruchom testy
+
+```bash
+cd server
 npm test
 ```
 
-### 8. Build produkcyjny (opcjonalnie)
+### 9. Build produkcyjny (opcjonalnie)
+
+#### Backend
 
 ```bash
+cd server
 npm run build
 npm start
+```
+
+#### Frontend
+
+```bash
+cd client
+npm run build
+npm run preview
 ```
 
 ---
