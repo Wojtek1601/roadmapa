@@ -224,8 +224,9 @@ describe("GET /api/auth/me", () => {
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(200);
-    expect(res.body.email).toBe("test@example.com");
-    expect(res.body.name).toBe("Test User");
+    expect(res.body.user).toBeDefined();
+    expect(res.body.user.email).toBe("test@example.com");
+    expect(res.body.user.name).toBe("Test User");
   });
 
   it("should return 401 without token", async () => {

@@ -28,7 +28,7 @@ export async function apiRequest<T>(
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'Wystąpił błąd' }));
-    throw new Error(error.message ?? error.errors?.[0]?.msg ?? 'Wystąpił błąd');
+    throw new Error(error.error ?? error.message ?? error.errors?.[0]?.msg ?? 'Wystąpił błąd');
   }
 
   return response.json() as Promise<T>;
