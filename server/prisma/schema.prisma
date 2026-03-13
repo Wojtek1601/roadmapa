@@ -55,6 +55,7 @@ model User {
   assignedTasks Task[]        @relation("AssignedTasks")
   createdTasks  Task[]        @relation("CreatedTasks")
   comments      Comment[]
+  taskChanges   TaskHistory[]
 }
 
 model Project {
@@ -136,6 +137,7 @@ model TaskHistory {
   taskId    String
   task      Task     @relation(fields: [taskId], references: [id])
   changedBy String
+  changer   User     @relation(fields: [changedBy], references: [id])
   createdAt DateTime @default(now())
 }
 
