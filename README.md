@@ -88,8 +88,8 @@ Aplikacja wspiera metodyki Agile / Scrum oraz klasyczne podejście do zarządzan
 
 ### Wymagania wstępne
 - [Node.js](https://nodejs.org/) (v18+)
-- [PostgreSQL](https://www.postgresql.org/) (v14+)
 - npm (instalowany razem z Node.js)
+- [Docker](https://www.docker.com/) (zalecany do uruchomienia bazy danych) **lub** lokalnie zainstalowany [PostgreSQL](https://www.postgresql.org/) (v14+)
 
 ### 1. Sklonuj repozytorium
 
@@ -98,41 +98,64 @@ git clone https://github.com/Wojtek1601/roadmapa.git
 cd roadmapa
 ```
 
-### 2. Zainstaluj zależności
+### 2. Uruchom bazę danych PostgreSQL
+
+#### Opcja A — Docker (zalecana)
+
+Upewnij się, że [Docker](https://www.docker.com/) jest zainstalowany i uruchomiony, a następnie:
+
+```bash
+docker compose up -d
+```
+
+Polecenie uruchomi kontener PostgreSQL w tle na porcie `5432`.
+Dane logowania (zgodne z plikiem `.env.example`):
+- użytkownik: `user`
+- hasło: `password`
+- baza danych: `roadmapa`
+
+> Aby zatrzymać bazę: `docker compose down`
+> Aby zatrzymać i usunąć dane: `docker compose down -v`
+
+#### Opcja B — lokalny PostgreSQL
+
+Jeśli masz PostgreSQL zainstalowany lokalnie, upewnij się że serwer działa i utwórz bazę danych:
+
+```bash
+createdb roadmapa
+```
+
+> Jeśli baza już istnieje, polecenie zwróci błąd — możesz go zignorować.
+
+### 3. Zainstaluj zależności
 
 ```bash
 cd server
 npm install
 ```
 
-### 3. Skonfiguruj zmienne środowiskowe
+### 4. Skonfiguruj zmienne środowiskowe
 
-Skopiuj plik `.env.example` i uzupełnij go swoimi danymi:
+Skopiuj plik `.env.example` i dostosuj do swoich ustawień:
 
 ```bash
 cp .env.example .env
 ```
 
-Edytuj plik `.env`:
+Jeśli korzystasz z Dockera (Opcja A), plik `.env` nie wymaga zmian — domyślne wartości są zgodne z `docker-compose.yml`.
+
+Jeśli korzystasz z lokalnego PostgreSQL (Opcja B), edytuj `DATABASE_URL` w pliku `.env`, podmieniając `user` i `password` na dane logowania do swojej bazy:
 
 ```env
-DATABASE_URL="postgresql://user:password@localhost:5432/roadmapa?schema=public"
-JWT_SECRET="twoj-sekretny-klucz"
-PORT=3000
+DATABASE_URL="postgresql://TWOJ_USER:TWOJE_HASLO@localhost:5432/roadmapa?schema=public"
 ```
 
-> **Uwaga:** Podmień `user` i `password` na dane logowania do swojej lokalnej bazy PostgreSQL. Upewnij się, że baza danych `roadmapa` istnieje — możesz ją utworzyć poleceniem:
-> ```bash
-> createdb roadmapa
-> ```
-> Jeśli baza już istnieje, polecenie zwróci błąd — możesz go zignorować.
->
 > Dla środowiska produkcyjnego wygeneruj silny `JWT_SECRET`, np.:
 > ```bash
 > openssl rand -base64 32
 > ```
 
-### 4. Skonfiguruj bazę danych
+### 5. Skonfiguruj bazę danych
 
 Wygeneruj klienta Prisma i uruchom migracje:
 
@@ -141,7 +164,9 @@ npm run prisma:generate
 npm run prisma:migrate
 ```
 
-### 5. Uruchom serwer deweloperski
+> **Uwaga:** Jeśli ten krok kończy się błędem `P1001: Can't reach database server at localhost:5432`, upewnij się, że baza PostgreSQL jest uruchomiona (patrz krok 2).
+
+### 6. Uruchom serwer deweloperski
 
 ```bash
 npm run dev
@@ -156,13 +181,13 @@ curl http://localhost:3000/api/health
 # Oczekiwana odpowiedź: {"status":"ok"}
 ```
 
-### 6. Uruchom testy
+### 7. Uruchom testy
 
 ```bash
 npm test
 ```
 
-### 7. Build produkcyjny (opcjonalnie)
+### 8. Build produkcyjny (opcjonalnie)
 
 ```bash
 npm run build
