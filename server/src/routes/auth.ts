@@ -18,11 +18,18 @@ const authLimiter = rateLimit({
   message: { error: "Zbyt wiele żądań, spróbuj ponownie później" },
 });
 
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: "Zbyt wiele żądań, spróbuj ponownie później" },
+});
+
 router.post("/register", authLimiter, registerValidation, register);
 router.post("/login", authLimiter, loginValidation, login);
-router.get("/me", authenticate, me);
+router.get("/me", apiLimiter, authenticate, me);
 router.post(
   "/projects/:projectId/roles",
+  apiLimiter,
   authenticate,
   requireRole(Role.ADMIN),
   assignRoleValidation,
