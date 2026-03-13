@@ -25,7 +25,7 @@ jest.mock("@prisma/client", () => {
       projectRole: mockProjectRoleModel,
       project: mockProjectModel,
     })),
-    Role: { ADMIN: "ADMIN", MEMBER: "MEMBER", VIEWER: "VIEWER" },
+    Role: { ADMIN: "ADMIN", PROJECT_MANAGER: "PROJECT_MANAGER", DEVELOPER: "DEVELOPER", VIEWER: "VIEWER" },
   };
 });
 
@@ -286,7 +286,7 @@ describe("POST /api/auth/projects/:projectId/roles", () => {
     // Mock role assignment
     mockProjectRoleModel.upsert.mockResolvedValue({
       id: "role-2",
-      role: "MEMBER",
+      role: "DEVELOPER",
       userId: "550e8400-e29b-41d4-a716-446655440001",
       projectId,
       user: { id: "550e8400-e29b-41d4-a716-446655440001", email: "target@example.com", name: "Target User" },
@@ -298,11 +298,11 @@ describe("POST /api/auth/projects/:projectId/roles", () => {
       .set("Authorization", `Bearer ${token}`)
       .send({
         userId: "550e8400-e29b-41d4-a716-446655440001",
-        role: "MEMBER",
+        role: "DEVELOPER",
       });
 
     expect(res.status).toBe(200);
-    expect(res.body.role).toBe("MEMBER");
+    expect(res.body.role).toBe("DEVELOPER");
   });
 
   it("should return 403 when user is not admin", async () => {
@@ -312,7 +312,7 @@ describe("POST /api/auth/projects/:projectId/roles", () => {
 
     mockProjectRoleModel.findUnique.mockResolvedValueOnce({
       id: "role-1",
-      role: "MEMBER",
+      role: "DEVELOPER",
       userId: mockUser.id,
       projectId,
     });
@@ -334,7 +334,7 @@ describe("POST /api/auth/projects/:projectId/roles", () => {
       .post(`/api/auth/projects/${projectId}/roles`)
       .send({
         userId: "550e8400-e29b-41d4-a716-446655440001",
-        role: "MEMBER",
+        role: "DEVELOPER",
       });
 
     expect(res.status).toBe(401);
