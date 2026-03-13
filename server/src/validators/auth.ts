@@ -25,6 +25,6 @@ export const loginValidation = [
 export const assignRoleValidation = [
   body("userId").isUUID().withMessage("Nieprawidłowy ID użytkownika"),
   body("role")
-    .isIn(["ADMIN", "MEMBER", "VIEWER"])
-    .withMessage("Rola musi być jedną z: ADMIN, MEMBER, VIEWER"),
+    .isIn(["ADMIN", "PROJECT_MANAGER", "DEVELOPER", "VIEWER"])
+    .withMessage("Rola musi być jedną z: ADMIN, PROJECT_MANAGER, DEVELOPER, VIEWER"),
 ];
