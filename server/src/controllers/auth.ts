@@ -55,7 +55,7 @@ export async function login(req: Request, res: Response): Promise<void> {
 export async function me(req: AuthRequest, res: Response): Promise<void> {
   try {
     const user = await getCurrentUser(req.userId!);
-    res.json(user);
+    res.json({ user });
   } catch (error) {
     if (
       error instanceof Error &&
